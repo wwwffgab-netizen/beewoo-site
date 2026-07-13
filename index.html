@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeeWoo — 主播 + AI视觉，一个人能撑一个直播间</title>
+
+<style>
+  /* ===== Reset & Base ===== */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#080808;
+    color:#e0e0e0;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* ===== Gold accent ===== */
+  :root{
+    --gold:#c8a04a;
+    --gold-dim:#8a7038;
+    --card-bg:#111;
+    --card-border:#1a1a1a;
+  }
+
+  /* ===== Hero ===== */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(2rem,6vw,6rem);
+    position:relative;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(200,160,74,.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(200,160,74,.04) 0%, transparent 60%),
+      #080808;
+  }
+  .hero-tag{
+    display:inline-block;
+    font-size:clamp(.75rem,1.2vw,.85rem);
+    letter-spacing:.15em;
+    color:var(--gold);
+    border:1px solid var(--gold-dim);
+    padding:.4em 1em;
+    margin-bottom:clamp(1.5rem,4vw,2.5rem);
+    text-transform:uppercase;
+  }
+  .hero h1{
+    font-size:clamp(2.5rem,8vw,5rem);
+    font-weight:900;
+    line-height:1.15;
+    letter-spacing:-.02em;
+    color:#fff;
+    margin-bottom:clamp(1rem,2vw,1.5rem);
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--gold);
+  }
+  .hero .sub{
+    font-size:clamp(1rem,2vw,1.3rem);
+    color:#999;
+    max-width:500px;
+    margin-bottom:clamp(2rem,4vw,3rem);
+  }
+  .hero-cta{
+    display:flex;gap:1rem;flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:.5em;
+    padding:.85em 1.8em;
+    font-size:.95rem;font-weight:600;
+    border:none;cursor:pointer;
+    transition:all .2s;
+  }
+  .btn-gold{
+    background:var(--gold);
+    color:#0a0a0a;
+  }
+  .btn-gold:hover{background:#dbb45e}
+  .btn-ghost{
+    background:transparent;
+    color:#ccc;
+    border:1px solid #333;
+  }
+  .btn-ghost:hover{border-color:#888;color:#fff}
+  .hero-scroll{
+    position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+    color:#555;font-size:.75rem;letter-spacing:.1em;
+    animation:bob 2s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{opacity:.4;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(6px)}}
+
+  /* ===== Sections ===== */
+  section{padding:clamp(4rem,8vw,8rem) clamp(1.5rem,6vw,6rem)}
+  .section-label{
+    font-size:.75rem;letter-spacing:.15em;color:var(--gold-dim);
+    text-transform:uppercase;margin-bottom:1rem;
+  }
+  .section-title{
+    font-size:clamp(1.6rem,4vw,2.4rem);
+    font-weight:800;color:#fff;margin-bottom:.8rem;line-height:1.3;
+  }
+  .section-desc{
+    color:#888;max-width:520px;margin-bottom:3rem;
+    font-size:clamp(.9rem,1.5vw,1rem);
+  }
+
+  /* ===== About ===== */
+  .about-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+  }
+  .about-card{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    padding:clamp(1.5rem,3vw,2.5rem);
+    border-radius:2px;
+  }
+  .about-card .num{
+    font-size:2.5rem;font-weight:900;color:var(--gold);
+    display:block;line-height:1;
+  }
+  .about-card h3{color:#fff;margin:.6rem 0 .3rem;font-size:1.1rem}
+  .about-card p{color:#888;font-size:.9rem}
+
+  .bio-block{
+    margin-top:3rem;
+  }
+  .bio-block p{
+    color:#999;font-size:1rem;max-width:600px;line-height:1.9;
+    margin-bottom:.8rem;
+  }
+  .bio-block strong{color:#ddd}
+
+  /* ===== Skills ===== */
+  .skills-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+  }
+  .skill-panel{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    padding:clamp(1.5rem,3vw,2.5rem);
+    border-radius:2px;
+    position:relative;overflow:hidden;
+  }
+  .skill-panel::before{
+    content:'';position:absolute;top:0;left:0;width:100%;height:2px;
+  }
+  .skill-panel.live::before{background:linear-gradient(90deg,var(--gold),transparent)}
+  .skill-panel.ai::before{background:linear-gradient(90deg,#6c5ce7,transparent)}
+  .skill-panel h3{
+    font-size:1.3rem;color:#fff;margin-bottom:.5rem;
+    display:flex;align-items:center;gap:.5em;
+  }
+  .skill-panel h3 .icon{font-size:1.5rem}
+  .skill-panel .subtitle{color:var(--gold);font-size:.85rem;margin-bottom:1rem}
+  .skill-panel ul{list-style:none}
+  .skill-panel li{
+    color:#aaa;font-size:.9rem;padding:.4em 0;padding-left:1.2em;
+    position:relative;
+  }
+  .skill-panel li::before{
+    content:'→';position:absolute;left:0;color:#555;
+  }
+
+  /* ===== Portfolio ===== */
+  .portfolio-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:1.5rem;
+  }
+  .portfolio-item{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    border-radius:2px;overflow:hidden;
+    transition:border-color .3s;
+  }
+  .portfolio-item:hover{border-color:#444}
+  .portfolio-item .img-placeholder{
+    aspect-ratio:4/3;
+    background:linear-gradient(135deg,#111 0%,#1a1a1a 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#444;font-size:.85rem;text-align:center;
+    padding:1rem;
+    position:relative;
+    cursor:pointer;
+  }
+  .portfolio-item .img-placeholder::after{
+    content:'+';
+    position:absolute;bottom:.8rem;right:1rem;
+    width:28px;height:28px;
+    background:var(--gold);color:#0a0a0a;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.2rem;font-weight:700;
+    opacity:0;transform:translateY(4px);
+    transition:all .2s;
+  }
+  .portfolio-item:hover .img-placeholder::after{opacity:1;transform:translateY(0)}
+  .portfolio-item .meta{
+    padding:1rem 1.2rem;
+  }
+  .portfolio-item .meta h4{color:#fff;font-size:.95rem;margin-bottom:.2rem}
+  .portfolio-item .meta span{color:#666;font-size:.8rem}
+
+  /* ===== Why ===== */
+  .why-block{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    border-left:3px solid var(--gold);
+    padding:clamp(1.5rem,3vw,2.5rem);
+    max-width:620px;
+  }
+  .why-block p{color:#aaa;line-height:1.9;font-size:.95rem}
+  .why-block p strong{color:#ddd}
+
+  /* ===== Contact ===== */
+  .contact-row{
+    display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start;
+  }
+  .contact-info{
+    flex:1;min-width:260px;
+  }
+  .contact-info .item{
+    margin-bottom:1.2rem;
+  }
+  .contact-info .item .label{
+    font-size:.75rem;color:#666;letter-spacing:.1em;text-transform:uppercase;
+  }
+  .contact-info .item .value{
+    font-size:1.1rem;color:#fff;margin-top:.2rem;
+  }
+  .contact-note{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    padding:1.5rem;max-width:340px;
+    font-size:.9rem;color:#888;line-height:1.8;
+  }
+  .contact-note strong{color:var(--gold)}
+
+  /* ===== Footer ===== */
+  footer{
+    text-align:center;padding:2rem;color:#333;font-size:.75rem;
+    border-top:1px solid #111;
+  }
+
+  /* ===== Responsive ===== */
+  @media(max-width:640px){
+    .about-grid,
+    .skills-grid{grid-template-columns:1fr}
+    .hero h1 br{display:none}
+    .contact-row{flex-direction:column}
+  }
+
+  /* ===== Animations ===== */
+  .reveal{
+    opacity:0;transform:translateY(30px);
+    transition:opacity .6s ease-out,transform .6s ease-out;
+  }
+  .reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <span class="hero-tag">BeeWoo / 饼干车库·应聘</span>
+  <h1>
+    能直播卖车。<br>
+    还能用 <em>AI 做视觉</em>。<br>
+    一个人，两份产出。
+  </h1>
+  <p class="sub">
+    我叫 BeeWoo。来自云南宣威落水镇，20岁。<br>
+    我可能不是你见过最懂车的人——但我是你团队里最缺的那种人。
+  </p>
+  <div class="hero-cta">
+    <a href="#contact" class="btn btn-gold">联系我</a>
+    <a href="#works" class="btn btn-ghost">看作品 →</a>
+  </div>
+  <span class="hero-scroll">↓ 往下看</span>
+</header>
+
+<!-- ===== ABOUT ===== -->
+<section id="about">
+  <p class="section-label">01 / 我是谁</p>
+  <h2 class="section-title">不是富二代。是一个想赢的人。</h2>
+  <p class="section-desc">
+    关于我，三行就够了。多的你面试再问。
+  </p>
+
+  <div class="about-grid reveal">
+    <div class="about-card">
+      <span class="num">2005</span>
+      <h3>宣威落水镇出生</h3>
+      <p>我妈是小学老师，我爸是公务员。他们求稳，我不要。</p>
+    </div>
+    <div class="about-card">
+      <span class="num">2024</span>
+      <h3>楚雄师范学院，电气工程</h3>
+      <p>专业是我妈选的。但 Hiphop 是我自己选的——人生第一件。</p>
+    </div>
+  </div>
+
+  <div class="bio-block reveal">
+    <p>
+      <strong>我开过直播。</strong> 不怯场、话密、能接住弹幕。观众说我放得开——<strong>我不需要稿子，车停在我面前我就能说。 </strong>
+    </p>
+    <p>
+      <strong>我懂 AI。</strong> Midjourney、Stable Diffusion、Runway、可灵——我能用这些工具做海报、做短视频、做直播间背景。你们现在的视频素材，我可以 AI 重制成电影级画面。
+    </p>
+    <p>
+      <strong>我不要高薪。</strong> 我从云南过来，管吃住就行。给我一个月试用，不行我自己走。
+    </p>
+  </div>
+</section>
+
+<!-- ===== SKILLS ===== -->
+<section id="skills">
+  <p class="section-label">02 / 我能做什么</p>
+  <h2 class="section-title">一个主播位，两份产出。</h2>
+  <p class="section-desc">
+    别人应聘主播就说"我能直播"。我说"我能直播 + 我能用AI帮团队升级所有视觉内容"。
+  </p>
+
+  <div class="skills-grid reveal">
+    <div class="skill-panel live">
+      <h3><span class="icon">🎙️</span> 直播卖车</h3>
+      <p class="subtitle">面向镜头，说人话</p>
+      <ul>
+        <li>不露脸直播，纯声音 + 车 —— 我会说，不干巴</li>
+        <li>恶补汽车知识中：劳斯莱斯全系、法拉利、迈巴赫</li>
+        <li>能念参数、回弹幕、带节奏、拉私域</li>
+        <li>自己开过直播，知道怎么让观众不走</li>
+        <li>到岗后两周内摸熟所有库存车型</li>
+      </ul>
+    </div>
+    <div class="skill-panel ai">
+      <h3><span class="icon">🤖</span> AI 视觉制作</h3>
+      <p class="subtitle">这是别人没有的技能</p>
+      <ul>
+        <li>用 AI 生成豪车海报 —— 省掉设计师外包费</li>
+        <li>用 AI 做短视频素材 —— 15秒炫车大片，电影级</li>
+        <li>升级直播间视觉背景 —— 让你们的直播间和别家不一样</li>
+        <li>车到 → AI 出图 → 当天上架 —— 效率碾压</li>
+        <li>你们团队现在没有人能做这些</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PORTFOLIO ===== -->
+<section id="works">
+  <p class="section-label">03 / 我能为饼干车库做的</p>
+  <h2 class="section-title">不是作品集，是投名状。</h2>
+  <p class="section-desc">
+    下面这些东西，是我对着你们车库在售的车，用 AI 做的示例。不是概念图——是你们拿到就能发的成品。
+  </p>
+
+  <div class="portfolio-grid reveal">
+
+    <!-- 作品 1 -->
+    <div class="portfolio-item">
+      <div class="img-placeholder">
+        🚗<br>劳斯莱斯库里南<br>AI 海报
+      </div>
+      <div class="meta">
+        <h4>AI 卖车海报 — 库里南</h4>
+        <span>Midjourney + PS 后期排版</span>
+      </div>
+    </div>
+
+    <!-- 作品 2 -->
+    <div class="portfolio-item">
+      <div class="img-placeholder">
+        🎬<br>15秒炫车短视频<br>AI 生成素材
+      </div>
+      <div class="meta">
+        <h4>AI 短视频 — 法拉利 SF90</h4>
+        <span>可灵 AI + 剪映剪辑</span>
+      </div>
+    </div>
+
+    <!-- 作品 3 -->
+    <div class="portfolio-item">
+      <div class="img-placeholder">
+        📺<br>直播间背景设计<br>AI 出图方案
+      </div>
+      <div class="meta">
+        <h4>直播间视觉升级方案</h4>
+        <span>DALL·E + Figma 排版</span>
+      </div>
+    </div>
+
+    <!-- 作品 4 -->
+    <div class="portfolio-item">
+      <div class="img-placeholder">
+        📱<br>抖音封面模板<br>统一视觉规范
+      </div>
+      <div class="meta">
+        <h4>抖音主页封面系统</h4>
+        <span>统一配色 + 字体 + 排版</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== WHY ===== -->
+<section id="why">
+  <p class="section-label">04 / 为什么选饼干车库</p>
+  <h2 class="section-title">我看过你的视频。我知道你在做什么。</h2>
+  <p class="section-desc">
+    不是海投。不是随便一个车库。我就是冲饼干来的。
+  </p>
+
+  <div class="why-block reveal">
+    <p>
+      <strong>饼干哥，我看过你的库里南视频。</strong> 从"全网冤大头"到周鸿祎夸你聪明——你懂流量，也懂车。一个3万粉能把豪车寄存交易跑起来的账号，说明内容到变现这条路是通的。
+    </p>
+    <p>
+      你现在团队六七个人，应该没有人专门做视觉内容，对吧？视频封面可以更帅，直播间背景可以更有质感，每条视频的视觉语言可以更统一——<strong>这些活 AI 能干，而我会用 AI。</strong>
+    </p>
+    <p>
+      我知道你是从泥里爬起来的。我也是。我不是来混的——<strong>我是来帮你把饼干车库做得更炸的。</strong>一个月试用，管吃住就行。电话在下面。
+    </p>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+  <p class="section-label">05 / 联系我</p>
+  <h2 class="section-title">一个月试用。管吃住就行。</h2>
+  <p class="section-desc">
+    我人还在楚雄。你一句话，我就来上海。
+  </p>
+
+  <div class="contact-row reveal">
+    <div class="contact-info">
+      <div class="item">
+        <span class="label">名字</span>
+        <div class="value">BeeWoo</div>
+      </div>
+      <div class="item">
+        <span class="label">微信</span>
+        <div class="value" style="font-family:monospace;color:var(--gold)"><!-- 替换为你的微信号 -->替换为你的微信号</div>
+      </div>
+      <div class="item">
+        <span class="label">电话</span>
+        <div class="value" style="font-family:monospace;color:var(--gold)"><!-- 替换为你的手机号 -->替换为你的手机号</div>
+      </div>
+      <div class="item">
+        <span class="label">来自</span>
+        <div class="value">云南宣威落水镇 → 上海</div>
+      </div>
+    </div>
+
+    <div class="contact-note">
+      <strong>💬 一句真心话</strong><br><br>
+      我不装。我不会说我已经准备好了。但我学得快、不怕累、有东西想证明。<br><br>
+      你花一个月的饭钱赌我一次。<br>
+      我用这一个月还你一个能直播 + 能出视觉的人。<br><br>
+      <strong>不亏。</strong>
+    </div>
+  </div>
+</section>
+
+<footer>
+  BeeWoo © 2026 &nbsp;·&nbsp; 云南宣威 → 上海 &nbsp;·&nbsp; 饼干车库专用应聘页
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {if(e.isIntersecting) e.target.classList.add('visible')})
+  },{threshold:.15})
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+</script>
+
+</body>
+</html>

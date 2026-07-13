@@ -66,9 +66,11 @@
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     padding:clamp(2rem,6vw,6rem);
     position:relative;
+    /* === 默认：纯黑+光晕。有了 bg-hero.jpg 后自动替换 === */
     background:
-      radial-gradient(ellipse 70% 50% at 20% 15%, rgba(200,160,83,.045) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 75% 85%, rgba(200,160,83,.025) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 50% at 20% 15%, rgba(200,160,83,.06) 0%, transparent 70%),
+      linear-gradient(rgba(6,6,6,.72), rgba(6,6,6,.88)),
+      url('bg-hero.jpg') center/cover no-repeat,
       var(--bg);
   }
   .hero-badge{
@@ -133,6 +135,16 @@
   .audit-item .label{font-size:.7rem;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem}
   .audit-item .problem{font-size:.95rem;color:#fff;margin-bottom:.4rem;font-weight:700}
   .audit-item .fix{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+  /* ==================== HONEST NOTE ==================== */
+  .honest-note{
+    background:var(--card);border:1px solid var(--border);
+    border-left:2px solid var(--gold-dim);
+    padding:clamp(1.3rem,2.5vw,1.8rem);margin-bottom:2.5rem;max-width:660px;
+  }
+  .honest-note p{color:#999;font-size:.9rem;line-height:1.9;margin-bottom:.5rem}
+  .honest-note p:last-child{margin-bottom:0}
+  .honest-note p strong{color:#ccc}
 
   /* ==================== TIMELINE ==================== */
   .timeline{position:relative;padding-left:2rem}
@@ -284,6 +296,15 @@
   <h2 class="section-heading">不要光说"我能"。看看我怎么做。</h2>
   <p class="section-sub">下面是到岗后的作战地图。不画饼，每一条都能量化验证。</p>
 
+  <div class="honest-note reveal">
+    <p><strong>我没有工作经验。</strong> 这是实话，不装。</p>
+    <p>我不是那种"什么都会"的人。很多东西我还没摸过——直播没做过，汽车知识刚起步，上海我也没去过。</p>
+    <p>但我有一个习惯：<strong>想学的东西，自己先动手试一遍。</strong></p>
+    <p>想做主播，我就自己开播试了，不怯场。想用 AI 出图，我就自己学了 Midjourney 和可灵，出了样片。想应聘你这，我就做了这个网站——不会写代码，一点点查，一点点改。</p>
+    <p><strong>我不会说"你选我不会错"。我说的是——你给我活，我就干。干得不好，你教，我改。</strong></p>
+    <p>下面这 30 天计划，是我对这份工作的想法。不是保证书，是一份认真的态度。</p>
+  </div>
+
   <div class="timeline reveal">
     <div class="timeline-item">
       <span class="week">第1周 · 摸清家底</span>
@@ -384,14 +405,14 @@
 <!-- ==================== CONTACT ==================== -->
 <section id="contact"><div class="container">
   <span class="section-tag">06 / 联系我</span>
-  <h2 class="section-heading">我人还在楚雄。你一句话，我就来上海。</h2>
+  <h2 class="section-heading">我人在云南。你一句话，我就来上海。</h2>
   <p class="section-sub">手机号即微信号。加我，我们聊。视频面试、电话聊、让我试播一场——都行。</p>
 
   <div class="contact-wrap reveal">
     <div class="contact-main">
       <div class="row"><span class="k">名字</span><div class="v">BeeWoo</div></div>
       <div class="row"><span class="k">电话 / 微信</span><div class="v">18187461703</div></div>
-      <div class="row"><span class="k">路线</span><div class="v">云南宣威落水镇 → 楚雄 → 上海</div></div>
+  
       <div class="row"><span class="k">条件</span><div class="v">一个月试用，管吃住就行。其他的你看着给。</div></div>
     </div>
     <div class="contact-highlight">

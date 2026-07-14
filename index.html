@@ -164,6 +164,18 @@ section:first-of-type{border-top:none}
 .port-meta{padding:.8rem 1rem}
 .port-meta h4{color:#fff;font-size:.8rem;margin-bottom:.15rem;font-weight:700}
 .port-meta span{color:var(--muted);font-size:.7rem}
+.port-item .port-thumb img{cursor:pointer;transition:transform .3s}
+.port-item .port-thumb img:hover{transform:scale(1.03)}
+
+/* ========== LIGHTBOX ========== */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:999;display:none;flex-direction:column;align-items:center;justify-content:center;cursor:zoom-out}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:75vh;object-fit:contain;cursor:default}
+.lightbox .prompt-box{background:rgba(255,255,255,.04);border-left:1px solid var(--gold);padding:.8rem 1.2rem;margin-top:1rem;max-width:600px;width:90%}
+.lightbox .prompt-box .label{font-size:.65rem;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.lightbox .prompt-box .text{font-size:.78rem;color:#999;line-height:1.6}
+.lightbox .close-btn{position:fixed;top:1rem;right:1.5rem;font-size:1.5rem;color:#666;cursor:pointer;z-index:1000;background:none;border:none}
+.lightbox .close-btn:hover{color:#fff}
 
 /* ========== WHY ========== */
 .why-block{
@@ -357,15 +369,17 @@ footer{text-align:center;padding:1.5rem;color:#1a1a1a;font-size:.65rem}
       <div class="port-item">
         <div class="port-thumb" style="background:none">
           <img src="微信图片_20260714150107_152_2.png" style="width:100%;height:100%;object-fit:cover" alt="库里南城堡">
+          <span class="prompt-hint" style="display:none">A black Rolls-Royce luxury sedan parked on a circular gravel driveway next to a fountain in front of a grand European manor or castle gate. Light beige stone castle walls, double arched ironwood doors. The car is in the lower-middle part of the frame, side or three-quarter front view. Bright daylight, natural light. Architectural and automotive photography, clean composition, photorealistic, detailed textures.</span>
         </div>
         <div class="port-meta">
           <h4>库里南 · 城堡庄园</h4>
-          <span>Midjourney — Rolls-Royce Cullinan, European manor, daylight</span>
+          <span>Midjourney — Rolls-Royce Cullinan, European manor</span>
         </div>
       </div>
       <div class="port-item">
         <div class="port-thumb" style="background:none">
           <img src="微信图片_20260714150341_153_2.png" style="width:100%;height:100%;object-fit:cover" alt="库里南">
+          <span class="prompt-hint" style="display:none">A black Rolls-Royce luxury sedan parked on a circular gravel driveway next to a fountain in front of a grand European manor or castle gate. Light beige stone castle walls, double arched ironwood doors. The car is in the lower-middle part of the frame, side or three-quarter front view. Bright daylight, natural light. Architectural and automotive photography, clean composition, photorealistic, detailed textures.</span>
         </div>
         <div class="port-meta">
           <h4>库里南 · 变体</h4>
@@ -441,6 +455,16 @@ footer{text-align:center;padding:1.5rem;color:#1a1a1a;font-size:.65rem}
 
 <footer>BeeWoo © 2026 · 云南 → 上海 · 为饼干车库定制</footer>
 
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox" id="lightbox">
+  <button class="close-btn" id="lbClose">✕</button>
+  <img src="" alt="" id="lbImg">
+  <div class="prompt-box" id="lbPrompt">
+    <div class="label">AI Prompt</div>
+    <div class="text"></div>
+  </div>
+</div>
+
 <script>
 // Scroll reveal
 const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')})},{threshold:.12})
@@ -459,6 +483,25 @@ const navObserver=new IntersectionObserver((es)=>{
   })
 },{threshold:.4})
 sections.forEach(s=>navObserver.observe(s))
+
+// Lightbox
+const lb=document.getElementById('lightbox')
+const lbImg=document.getElementById('lbImg')
+const lbPrompt=document.getElementById('lbPrompt')
+const lbClose=document.getElementById('lbClose')
+
+document.querySelectorAll('.port-thumb img').forEach(img=>{
+  img.addEventListener('click',()=>{
+    lbImg.src=img.src
+    const prompt=img.closest('.port-item').querySelector('.prompt-hint')
+    lbPrompt.querySelector('.text').textContent=prompt?prompt.textContent:'暂无提示词'
+    lb.classList.add('open')
+  })
+})
+
+lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('open')})
+lbClose.addEventListener('click',()=>lb.classList.remove('open'))
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open')})
 </script>
 </body>
 </html>

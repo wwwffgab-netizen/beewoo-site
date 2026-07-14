@@ -3,438 +3,458 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BeeWoo — 主播 + AI视觉，一个人撑一个直播间</title>
+<title>BeeWoo — 能卖车，更会用AI做内容</title>
 <style>
-  /* ==================== Reset & Base ==================== */
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
-    background:#060606;
-    color:#c0c0c0;
-    line-height:1.72;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-    font-size:16px;
-  }
+/* ========== RESET ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+  background:#050505;color:#b0b0b0;line-height:1.65;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+:root{
+  --gold:#c8a053;--gold-bright:#e2c47a;--gold-dim:#5e4c2a;
+  --bg:#050505;--card:#0b0b0b;--border:rgba(255,255,255,.06);--text:#b0b0b0;--muted:#666;
+}
 
-  :root{
-    --gold:#c8a053;
-    --gold-bright:#e2c47a;
-    --gold-dim:#6e5a32;
-    --bg:#060606;
-    --card:#0e0e0e;
-    --border:#1c1c1c;
-    --text:#c0c0c0;
-    --muted:#777;
-  }
+/* ========== SCROLL SNAP (desktop) ========== */
+@media(min-width:769px){
+  html{scroll-snap-type:y mandatory}
+  section{scroll-snap-align:start}
+}
 
-  /* ==================== Typography ==================== */
-  .section-tag{
-    font-size:.7rem;font-weight:600;letter-spacing:.2em;
-    color:var(--gold-dim);text-transform:uppercase;margin-bottom:1.2rem;display:block;
-  }
-  .section-heading{
-    font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:#fff;
-    line-height:1.25;margin-bottom:1rem;letter-spacing:-.01em;
-  }
-  .section-sub{
-    color:var(--muted);max-width:560px;margin-bottom:3.5rem;
-    font-size:.95rem;line-height:1.8;
-  }
+/* ========== NAV DOTS ========== */
+.nav-dots{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);z-index:99;display:flex;flex-direction:column;gap:.8rem}
+@media(max-width:768px){.nav-dots{display:none}}
+.nav-dots a{width:6px;height:6px;background:#333;border-radius:50%;transition:all .3s;display:block}
+.nav-dots a:hover,.nav-dots a.active{background:var(--gold);box-shadow:0 0 8px rgba(200,160,83,.4)}
 
-  /* ==================== Layout ==================== */
-  section{padding:clamp(3.5rem,8vw,7rem) clamp(1.2rem,5vw,5rem)}
-  .container{max-width:960px;margin:0 auto}
-  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-  .reveal.visible{opacity:1;transform:translateY(0)}
+/* ========== SECTIONS ========== */
+section{
+  min-height:100vh;display:flex;align-items:center;
+  padding:clamp(3rem,6vw,6rem) clamp(1.2rem,5vw,5rem);
+  border-top:1px solid rgba(200,160,83,.06);
+  position:relative;
+}
+section:first-of-type{border-top:none}
+.container{max-width:1040px;margin:0 auto;width:100%}
 
-  /* ==================== Buttons ==================== */
-  .btn{
-    display:inline-flex;align-items:center;gap:.45em;
-    padding:.8em 1.7em;font-size:.9rem;font-weight:700;
-    border:none;cursor:pointer;transition:all .22s;text-decoration:none;
-    letter-spacing:.02em;
-  }
-  .btn-gold{background:var(--gold);color:#0a0a0a}
-  .btn-gold:hover{background:var(--gold-bright);transform:translateY(-1px);box-shadow:0 8px 24px rgba(200,160,83,.15)}
-  .btn-line{background:transparent;color:#bbb;border:1px solid #333}
-  .btn-line:hover{border-color:#777;color:#fff}
+/* ========== TYPOGRAPHY ========== */
+.section-tag{
+  font-size:.65rem;font-weight:600;letter-spacing:.2em;
+  color:var(--gold-dim);text-transform:uppercase;margin-bottom:1rem;display:block;
+}
+.section-heading{
+  font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;
+  line-height:1.15;margin-bottom:1rem;letter-spacing:-.01em;
+}
+.section-sub{
+  color:var(--muted);max-width:440px;margin-bottom:3rem;
+  font-size:.82rem;line-height:1.8;
+}
 
-  /* ==================== HERO ==================== */
-  .hero{
-    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    padding:clamp(2rem,6vw,6rem);
-    position:relative;
-    /* === Hero背景图 === */
-    background:
-      radial-gradient(ellipse 70% 50% at 20% 15%, rgba(200,160,83,.06) 0%, transparent 70%),
-      linear-gradient(rgba(6,6,6,.72), rgba(6,6,6,.88)),
-      url('099fe0e21fb07a927a6cfb1097a13107.png') center/cover no-repeat,
-      var(--bg);
-  }
-  .hero-badge{
-    display:inline-flex;align-items:center;gap:.45em;
-    font-size:.75rem;letter-spacing:.12em;color:var(--gold);
-    border:1px solid rgba(200,160,83,.25);padding:.5em 1em;margin-bottom:2rem;
-    white-space:nowrap;
-  }
-  .hero-badge .dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s ease infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .hero h1{
-    font-size:clamp(2.4rem,7vw,4.5rem);font-weight:900;color:#fff;
-    line-height:1.1;letter-spacing:-.02em;margin-bottom:1.3rem;
-  }
-  .hero h1 em{font-style:normal;color:var(--gold)}
-  .hero .sub{
-    font-size:clamp(.95rem,1.6vw,1.1rem);color:#888;max-width:480px;
-    margin-bottom:2.5rem;line-height:1.7;
-  }
-  .hero .sub strong{color:#bbb}
-  .hero-cta{display:flex;gap:.8rem;flex-wrap:wrap}
+/* ========== BUTTONS ========== */
+.btn{
+  display:inline-flex;align-items:center;gap:.4em;
+  padding:.7em 1.5em;font-size:.8rem;font-weight:700;
+  border:none;cursor:pointer;transition:all .22s;text-decoration:none;letter-spacing:.02em;
+}
+.btn-gold{background:var(--gold);color:#050505}
+.btn-gold:hover{background:var(--gold-bright);box-shadow:0 8px 28px rgba(200,160,83,.12)}
+.btn-line{background:transparent;color:#999;border:1px solid rgba(255,255,255,.12)}
+.btn-line:hover{border-color:rgba(255,255,255,.3);color:#fff}
 
-  /* Stat row under hero */
-  .hero-stats{
-    display:flex;gap:clamp(1.5rem,4vw,3rem);margin-top:clamp(3rem,6vw,5rem);
-  }
-  .hero-stats .stat{}
-  .hero-stats .stat .n{font-size:2rem;font-weight:900;color:#fff;line-height:1}
-  .hero-stats .stat .l{font-size:.75rem;color:#666;margin-top:.4rem;letter-spacing:.05em}
+/* ========== HERO ========== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(2rem,6vw,6rem);
+  background:
+    radial-gradient(ellipse 60% 40% at 25% 20%, rgba(200,160,83,.035) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 80% 75%, rgba(200,160,83,.02) 0%, transparent 70%),
+    linear-gradient(rgba(5,5,5,.65),rgba(5,5,5,.82)),
+    url('099fe0e21fb07a927a6cfb1097a13107.png') center/cover no-repeat,
+    var(--bg);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.4em;
+  font-size:.7rem;letter-spacing:.14em;color:var(--gold);
+  border:1px solid rgba(200,160,83,.2);padding:.45em .9em;margin-bottom:2rem;
+}
+.hero-badge .dot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{
+  font-size:clamp(3.5rem,11vw,8rem);font-weight:900;color:#fff;
+  line-height:.95;letter-spacing:-.03em;margin-bottom:1.2rem;
+}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .sub{font-size:.8rem;color:#777;max-width:360px;margin-bottom:2.5rem;line-height:1.7}
+.hero .sub strong{color:#aaa}
+.hero-cta{display:flex;gap:.7rem;flex-wrap:wrap}
+.hero-divider{
+  width:50px;height:1px;background:var(--gold);
+  margin-top:clamp(3rem,6vw,5rem);
+  position:relative;
+}
+.hero-divider::after{
+  content:'↓';position:absolute;right:-20px;top:-8px;
+  font-size:.65rem;color:var(--gold-dim);
+}
 
-  /* ==================== CARDS ==================== */
-  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  .card{
-    background:var(--card);border:1px solid var(--border);
-    padding:clamp(1.4rem,3vw,2.2rem);transition:border-color .3s;
-  }
-  .card:hover{border-color:#2a2a2a}
-  .card .icon{font-size:1.8rem;margin-bottom:.6rem;display:block}
-  .card h3{font-size:1.1rem;color:#fff;margin-bottom:.3rem;font-weight:700}
-  .card .sub{font-size:.8rem;color:var(--gold-dim);margin-bottom:1rem}
-  .card ul{list-style:none}
-  .card li{font-size:.88rem;color:#999;padding:.35em 0;padding-left:1.1em;position:relative}
-  .card li::before{content:'›';position:absolute;left:0;color:#444;font-weight:700}
+/* ========== SKILL PANELS ========== */
+.skill-panels{display:grid;grid-template-columns:3fr 2fr;gap:1.2rem}
+@media(max-width:680px){.skill-panels{grid-template-columns:1fr}}
+.skill{
+  background:var(--card);padding:clamp(1.3rem,2.5vw,2rem);
+  border-left:1px solid rgba(200,160,83,.15);
+  position:relative;
+}
+.skill h3{font-size:1.3rem;color:#fff;margin-bottom:.4rem;font-weight:800}
+.skill .tagline{color:var(--gold-dim);font-size:.75rem;margin-bottom:1rem}
+.skill li{font-size:.8rem;color:#999;padding:.3em 0;padding-left:1em;position:relative;list-style:none}
+.skill li::before{content:'→';position:absolute;left:0;color:#3a3a3a;font-size:.75rem}
 
-  /* ==================== SKILL PANELS ==================== */
-  .skill-panels{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  .skill{
-    background:var(--card);border:1px solid var(--border);padding:clamp(1.5rem,3vw,2.5rem);
-    position:relative;overflow:hidden;
-  }
-  .skill::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px}
-  .skill.live::before{background:linear-gradient(90deg,var(--gold),transparent 60%)}
-  .skill.ai::before{background:linear-gradient(90deg,#a78bfa,transparent 60%)}
-  .skill h3{font-size:1.2rem;color:#fff;margin-bottom:.5rem}
-  .skill .tagline{color:var(--gold-dim);font-size:.8rem;margin-bottom:1.2rem}
-  .skill li{font-size:.88rem;color:#999;padding:.35em 0;padding-left:1.1em;position:relative;list-style:none}
-  .skill li::before{content:'→';position:absolute;left:0;color:#444}
+/* ========== AUDIT GRID ========== */
+.audit-wrap{display:grid;grid-template-columns:1.6fr 1fr;gap:0}
+@media(max-width:680px){.audit-wrap{grid-template-columns:1fr}}
+.audit-visual{
+  background:linear-gradient(145deg,#0a0a0a,#101010);
+  min-height:300px;display:flex;align-items:center;justify-content:center;
+  color:#2a2a2a;font-size:.75rem;letter-spacing:.1em;
+  border-left:1px solid rgba(200,160,83,.08);
+}
+.audit-cards{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.03)}
+.audit-item{
+  background:var(--card);padding:clamp(1rem,2vw,1.4rem);
+  border-left:1px solid rgba(200,160,83,.1);flex:1;
+}
+.audit-item .label{font-size:.62rem;color:var(--gold-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
+.audit-item .problem{font-size:.85rem;color:#fff;margin-bottom:.25rem;font-weight:700}
+.audit-item .fix{font-size:.75rem;color:var(--muted);line-height:1.6}
 
-  /* ==================== AUDIT ==================== */
-  .audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  .audit-item{background:var(--card);border:1px solid var(--border);padding:clamp(1.3rem,2.5vw,1.8rem)}
-  .audit-item .label{font-size:.7rem;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem}
-  .audit-item .problem{font-size:.95rem;color:#fff;margin-bottom:.4rem;font-weight:700}
-  .audit-item .fix{font-size:.85rem;color:var(--muted);line-height:1.6}
+/* ========== HONEST NOTE ========== */
+.honest-note{
+  background:var(--card);border-left:1px solid var(--gold-dim);
+  padding:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:2.5rem;max-width:600px;
+}
+.honest-note p{color:#999;font-size:.82rem;line-height:1.9;margin-bottom:.4rem}
+.honest-note p:last-child{margin-bottom:0}
+.honest-note p strong{color:#ccc}
 
-  /* ==================== HONEST NOTE ==================== */
-  .honest-note{
-    background:var(--card);border:1px solid var(--border);
-    border-left:2px solid var(--gold-dim);
-    padding:clamp(1.3rem,2.5vw,1.8rem);margin-bottom:2.5rem;max-width:660px;
-  }
-  .honest-note p{color:#999;font-size:.9rem;line-height:1.9;margin-bottom:.5rem}
-  .honest-note p:last-child{margin-bottom:0}
-  .honest-note p strong{color:#ccc}
+/* ========== TIMELINE ========== */
+.timeline{position:relative;padding-left:1.8rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(200,160,83,.15)}
+.timeline-item{margin-bottom:1.8rem;position:relative}
+.timeline-item::before{content:'';position:absolute;left:-1.8rem;top:.45rem;width:6px;height:6px;background:var(--gold);border-radius:50%}
+.timeline-item .week{font-size:.65rem;color:var(--gold-dim);letter-spacing:.12em;text-transform:uppercase}
+.timeline-item h4{font-size:1rem;color:#fff;margin:.1rem 0 .2rem;font-weight:700}
+.timeline-item p{font-size:.8rem;color:var(--muted);line-height:1.7;max-width:480px}
 
-  /* ==================== TIMELINE ==================== */
-  .timeline{position:relative;padding-left:2rem}
-  .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--gold-dim),transparent 80%)}
-  .timeline-item{margin-bottom:2rem;position:relative}
-  .timeline-item::before{content:'';position:absolute;left:-2rem;top:.5rem;width:8px;height:8px;background:var(--gold);border-radius:50%}
-  .timeline-item .week{font-size:.7rem;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase}
-  .timeline-item h4{font-size:1.05rem;color:#fff;margin:.15rem 0 .3rem}
-  .timeline-item p{font-size:.88rem;color:var(--muted);line-height:1.7;max-width:520px}
+/* ========== PORTFOLIO ========== */
+.port-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.port-item{background:var(--card);overflow:hidden;transition:border-color .3s;border-left:1px solid rgba(200,160,83,.08)}
+.port-item:hover{border-left-color:rgba(200,160,83,.3)}
+.port-thumb{
+  aspect-ratio:4/3;background:linear-gradient(145deg,#0a0a0a,#111);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:1rem;gap:.3rem;
+}
+.port-thumb .emoji{font-size:1.6rem;opacity:.35}
+.port-thumb .prompt-hint{font-size:.65rem;color:#444;max-width:180px;line-height:1.5}
+.port-meta{padding:.8rem 1rem}
+.port-meta h4{color:#fff;font-size:.8rem;margin-bottom:.15rem;font-weight:700}
+.port-meta span{color:var(--muted);font-size:.7rem}
 
-  /* ==================== PORTFOLIO ==================== */
-  .port-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.2rem}
-  .port-item{background:var(--card);border:1px solid var(--border);overflow:hidden;transition:border-color .3s}
-  .port-item:hover{border-color:#333}
-  .port-thumb{aspect-ratio:4/3;background:linear-gradient(145deg,#0d0d0d,#141414);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem;gap:.4rem}
-  .port-thumb .emoji{font-size:2rem;opacity:.5}
-  .port-thumb .prompt-hint{font-size:.72rem;color:#555;max-width:200px;line-height:1.5}
-  .port-meta{padding:1rem}
-  .port-meta h4{color:#fff;font-size:.88rem;margin-bottom:.2rem}
-  .port-meta span{color:var(--muted);font-size:.75rem}
+/* ========== WHY ========== */
+.why-block{
+  background:var(--card);border-left:1px solid var(--gold);
+  padding:clamp(1.3rem,3vw,2rem);max-width:580px;
+}
+.why-block p{color:#999;line-height:1.9;font-size:.82rem;margin-bottom:.6rem}
+.why-block p:last-child{margin-bottom:0}
+.why-block p strong{color:#ccc}
 
-  /* ==================== WHY ==================== */
-  .why-block{
-    background:var(--card);border:1px solid var(--border);
-    border-left:3px solid var(--gold);padding:clamp(1.5rem,3vw,2.5rem);max-width:640px;
-  }
-  .why-block p{color:#aaa;line-height:1.9;font-size:.93rem;margin-bottom:.8rem}
-  .why-block p strong{color:#ddd}
-  .why-block p:last-child{margin-bottom:0}
+/* ========== CONTACT ========== */
+.contact-wrap{display:flex;gap:2rem;flex-wrap:wrap}
+.contact-main{flex:1;min-width:240px}
+.contact-main .row{margin-bottom:.9rem}
+.contact-main .row .k{font-size:.65rem;color:#4a4a4a;letter-spacing:.12em;text-transform:uppercase}
+.contact-main .row .v{font-size:.95rem;color:#fff;margin-top:.1rem;font-weight:600}
+.contact-highlight{
+  background:var(--card);border-left:1px solid rgba(200,160,83,.15);
+  padding:1.3rem;max-width:300px;font-size:.8rem;color:var(--muted);line-height:1.8;
+}
+.contact-highlight strong{color:var(--gold)}
 
-  /* ==================== CONTACT ==================== */
-  .contact-wrap{display:flex;gap:2rem;flex-wrap:wrap}
-  .contact-main{flex:1;min-width:260px}
-  .contact-main .row{margin-bottom:1.1rem}
-  .contact-main .row .k{font-size:.7rem;color:#555;letter-spacing:.1em;text-transform:uppercase}
-  .contact-main .row .v{font-size:1.05rem;color:#fff;margin-top:.15rem}
-  .contact-highlight{
-    background:var(--card);border:1px solid var(--border);padding:1.5rem;
-    max-width:320px;font-size:.88rem;color:var(--muted);line-height:1.8;
-  }
-  .contact-highlight strong{color:var(--gold)}
+/* ========== FINAL CTA ========== */
+.final-cta{
+  text-align:center;padding:clamp(4rem,10vw,8rem) clamp(1.2rem,5vw,5rem);
+  background:var(--gold);color:#050505;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.final-cta h2{font-size:clamp(2.5rem,8vw,5rem);font-weight:900;line-height:1.1;margin-bottom:1rem}
+.final-cta .big-phone{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:700;letter-spacing:.05em;margin-bottom:.5rem}
+.final-cta p{font-size:.85rem;opacity:.7;max-width:400px}
 
-  /* ==================== FOOTER ==================== */
-  footer{text-align:center;padding:2rem 1rem;color:#2a2a2a;font-size:.72rem;border-top:1px solid #111}
+/* ========== FOOTER ========== */
+footer{text-align:center;padding:1.5rem;color:#1a1a1a;font-size:.65rem}
 
-  /* ==================== RESPONSIVE ==================== */
-  @media(max-width:680px){
-    .card-grid,.skill-panels,.audit-grid{grid-template-columns:1fr}
-    .contact-wrap{flex-direction:column}
-    .hero-stats{gap:2rem}
-  }
-
-  /* ==================== ANIMATIONS ==================== */
-  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-  .reveal.show{opacity:1;transform:translateY(0)}
+/* ========== RESPONSIVE ========== */
+@media(max-width:680px){
+  .hero h1{font-size:clamp(2.6rem,12vw,4rem)}
+  .contact-wrap{flex-direction:column}
+}
+@media(max-width:480px){
+  section{padding:2.5rem 1rem}
+}
 </style>
 </head>
 <body>
 
-<!-- ==================== HERO ==================== -->
-<header class="hero">
+<!-- ===== NAV DOTS ===== -->
+<nav class="nav-dots" id="navDots">
+  <a href="#hero" class="active"></a>
+  <a href="#do"></a>
+  <a href="#audit"></a>
+  <a href="#plan"></a>
+  <a href="#works"></a>
+  <a href="#why"></a>
+  <a href="#contact"></a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
   <div class="hero-badge"><span class="dot"></span> 饼干车库 · 应聘</div>
-  <h1>
-    能卖车。<br>
-    更会用 <em>AI 做内容</em>。
-  </h1>
+  <h1>能卖车。<br>更会用<em>AI</em><br>做内容。</h1>
   <p class="sub">
-    我叫 BeeWoo，20岁，云南宣威人。<br>
-    别人应聘只能做一件事。<strong>我能做两件。</strong>
+    BeeWoo。20岁。云南宣威。<br>
+    别人应聘做一件事。<strong>我能做两件。</strong>
   </p>
   <div class="hero-cta">
-    <a href="#contact" class="btn btn-gold">用我 — 一个月试用，管吃住就行</a>
-    <a href="#do" class="btn btn-line">我能做什么 →</a>
+    <a href="#contact" class="btn btn-gold">一个月试用，管吃住</a>
+    <a href="#do" class="btn btn-line">往下看 →</a>
   </div>
-  <div class="hero-stats">
-    <div class="stat"><span class="n">&#8734;</span><span class="l">直播体力 — 话多不累</span></div>
-    <div class="stat"><span class="n">AI</span><span class="l">Midjourney / SD / 可灵 / Runway</span></div>
-    <div class="stat"><span class="n">1</span><span class="l">个人 = 主播 + 视觉</span></div>
-  </div>
-</header>
+  <div class="hero-divider"></div>
+</section>
 
-<!-- ==================== WHAT I CAN DO ==================== -->
-<section id="do"><div class="container">
-  <span class="section-tag">01 / 我能做什么</span>
-  <h2 class="section-heading">一张嘴卖车，一双手做视觉。</h2>
-  <p class="section-sub">上海豪车库那么多，你们为什么选我？因为别人只能干一样，我能干两样。</p>
+<!-- ===== SKILLS ===== -->
+<section id="do">
+  <div class="container">
+    <span class="section-tag">01 / 我能做什么</span>
+    <h2 class="section-heading">一张嘴卖车。<br>一双手出视觉。</h2>
+    <p class="section-sub">上海豪车库那么多。别人只能干一样。</p>
 
-  <div class="skill-panels reveal">
-    <div class="skill live">
-      <h3>🎙️ 直播卖车</h3>
-      <p class="tagline">不露脸，纯声音 + 车，话不掉地上。</p>
-      <ul>
-        <li>自己开过直播，观众说放得开，能接梗</li>
-        <li>系统恶补汽车知识 — 劳斯莱斯全系、法拉利、迈巴赫</li>
-        <li>能念参数、回弹幕、引导私域、带购买节奏</li>
-        <li>不挑时段 — 凌晨场、周末场，随时上</li>
-        <li>两周内摸熟库存，每台车都能说出三个卖点</li>
-      </ul>
-    </div>
-    <div class="skill ai">
-      <h3>🤖 AI 视觉内容</h3>
-      <p class="tagline">你们团队现在没人能做这件事。</p>
-      <ul>
-        <li>车到 → 当天出海报 → 上架就能用</li>
-        <li>AI 生成 15 秒炫车短视频 — 电影级画面质感</li>
-        <li>直播间背景升级 — 不只是"车库一角"，是品牌空间</li>
-        <li>统一抖音主页封面系统 — 每期视频封面一个风格</li>
-        <li>省设计师外包费 — 我一个人全包</li>
-      </ul>
-    </div>
-  </div>
-</div></section>
-
-<!-- ==================== CONTENT AUDIT ==================== -->
-<section><div class="container">
-  <span class="section-tag">02 / 我看过你的号</span>
-  <h2 class="section-heading">不是海投。是冲饼干来的。</h2>
-  <p class="section-sub">
-    我蹲过你的抖音。下面这些不是挑刺——是我入职后能帮你改的地方。
-  </p>
-
-  <div class="audit-grid reveal">
-    <div class="audit-item">
-      <span class="label">现状</span>
-      <p class="problem">每条视频封面风格不统一</p>
-      <p class="fix">有的白字、有的黄字、有的没字。一眼扫过去不像一个品牌。→ 我来做一套统一的封面模板，AI 批量生成，每条视频发布前套上去，10秒搞定。</p>
-    </div>
-    <div class="audit-item">
-      <span class="label">现状</span>
-      <p class="problem">直播间画面就是车库实景，没有设计</p>
-      <p class="fix">别的豪车直播间做成了一个"展厅"。饼干的车库是"真车库"——这反而是优势。→ 我用 AI 把实景升级成电影感背景，保留真实感但提升品质。</p>
-    </div>
-    <div class="audit-item">
-      <span class="label">现状</span>
-      <p class="problem">每台车缺少专属的"视觉名片"</p>
-      <p class="fix">现在卖车靠直播念参数 + 手机拍两张。→ 每台车入库当天，我用 AI 出 3 张不同风格的海报 + 1 条 15 秒短视频。车主看到这种包装，更愿意把车放你这寄售。</p>
-    </div>
-    <div class="audit-item">
-      <span class="label">现状</span>
-      <p class="problem">视频更新频率不稳定，内容形式单一</p>
-      <p class="fix">搭讪系列是爆款，但不能只有搭讪。→ 我可以出镜拍"饼干车库日常"（不露脸也行）、"这台车为什么值这个价"、AI 炫车混剪——丰富内容矩阵，让账号不止一种看头。</p>
-    </div>
-  </div>
-</div></section>
-
-<!-- ==================== 30-DAY PLAN ==================== -->
-<section><div class="container">
-  <span class="section-tag">03 / 入职后30天</span>
-  <h2 class="section-heading">不要光说"我能"。看看我怎么做。</h2>
-  <p class="section-sub">下面是到岗后的作战地图。不画饼，每一条都能量化验证。</p>
-
-  <div class="honest-note reveal">
-    <p><strong>我没有工作经验。</strong> 这是实话，不装。</p>
-    <p>我不是那种"什么都会"的人。很多东西我还没摸过——直播没做过，汽车知识刚起步，上海我也没去过。</p>
-    <p>但我有一个习惯：<strong>想学的东西，自己先动手试一遍。</strong></p>
-    <p>想做主播，我就自己开播试了，不怯场。想用 AI 出图，我就自己学了 Midjourney 和可灵，出了样片。想应聘你这，我就做了这个网站——不会写代码，一点点查，一点点改。</p>
-    <p><strong>我不会说"你选我不会错"。我说的是——你给我活，我就干。干得不好，你教，我改。</strong></p>
-    <p>下面这 30 天计划，是我对这份工作的想法。不是保证书，是一份认真的态度。</p>
-  </div>
-
-  <div class="timeline reveal">
-    <div class="timeline-item">
-      <span class="week">第1周 · 摸清家底</span>
-      <h4>摸熟所有库存车型，建立 AI 素材生产线</h4>
-      <p>每台车拍一组照片 → AI 生成首批海报和短视频模板 → 试播 3 场找感觉 → 跟团队对齐视觉风格方向。</p>
-    </div>
-    <div class="timeline-item">
-      <span class="week">第2周 · 正式开播 + 视觉上线</span>
-      <h4>独立直播 + 统一全账号封面系统</h4>
-      <p>开始独立上播卖车，不露脸，主要靠讲车。同时为每台在售车输出一套视觉物料（海报×3 + 短视频×1），统一封面模板投入使用。</p>
-    </div>
-    <div class="timeline-item">
-      <span class="week">第3周 · 升级直播间</span>
-      <h4>直播间视觉升级 + 内容矩阵扩列</h4>
-      <p>AI 重制直播间背景，建立直播画面视觉规范。开始每周固定出 2-3 条 AI 视觉内容（炫车混剪、车型对比、车库日常），丰富账号内容类型。</p>
-    </div>
-    <div class="timeline-item">
-      <span class="week">第4周 · 数据复盘</span>
-      <h4>拿数据说话 — 留下还是走人</h4>
-      <p>四周产出：×张海报、×条视频、×场直播。数据说话。有成长 → 留下来，谈正式待遇。不行 → 我不耽误你。</p>
-    </div>
-  </div>
-</div></section>
-
-<!-- ==================== PORTFOLIO ==================== -->
-<section id="works"><div class="container">
-  <span class="section-tag">04 / 投名状</span>
-  <h2 class="section-heading">不是空口说。这是我能为你做的。</h2>
-  <p class="section-sub">
-    下面每一条附了 AI prompt。给饼干看的不只是"我能出图"，而是我的思路——每张图为什么要这样做。
-  </p>
-
-  <div class="port-grid reveal">
-    <div class="port-item">
-      <div class="port-thumb">
-        <span class="emoji">🏎️</span>
-        <span class="prompt-hint">Prompt: Rolls-Royce Cullinan, night city, neon reflections on black paint, cinematic lighting, luxury automotive photography, 8K --ar 4:3</span>
+    <div class="skill-panels">
+      <div class="skill">
+        <h3>🎙️ 直播卖车</h3>
+        <p class="tagline">不露脸，纯声音。话不掉地上。</p>
+        <ul>
+          <li>自己开过直播，观众说放得开</li>
+          <li>恶补汽车知识——劳斯莱斯、法拉利、迈巴赫</li>
+          <li>能念参数、回弹幕、带节奏、拉私域</li>
+          <li>不挑时段，凌晨场周末场随时上</li>
+          <li>两周摸熟库存，每台车三个卖点</li>
+        </ul>
       </div>
-      <div class="port-meta">
-        <h4>库里南卖车海报</h4>
-        <span>Midjourney → PS 排版 → 成品</span>
-      </div>
-    </div>
-    <div class="port-item">
-      <div class="port-thumb">
-        <span class="emoji">🎬</span>
-        <span class="prompt-hint">Prompt: Ferrari SF90 driving through Shanghai at night, rain on asphalt, taillight trails, cinematic, slow motion, 15s clip</span>
-      </div>
-      <div class="port-meta">
-        <h4>15秒 AI 短视频</h4>
-        <span>可灵 / Runway → 剪映 → 成品</span>
-      </div>
-    </div>
-    <div class="port-item">
-      <div class="port-thumb">
-        <span class="emoji">📺</span>
-        <span class="prompt-hint">Prompt: Luxury car showroom with warm ambient lighting, industrial chic, concrete floor + gold accents, wide shot, realistic</span>
-      </div>
-      <div class="port-meta">
-        <h4>直播间背景方案</h4>
-        <span>DALL·E / SD → 现场合成</span>
-      </div>
-    </div>
-    <div class="port-item">
-      <div class="port-thumb">
-        <span class="emoji">🧬</span>
-        <span class="prompt-hint">一套3件：车型图+价格带+统一角标 → 品牌色#c8a053 + 黑底 + 粗体中文 → 每期套用</span>
-      </div>
-      <div class="port-meta">
-        <h4>封面模板系统</h4>
-        <span>Figma / Canvas → 团队直接套</span>
+      <div class="skill">
+        <h3>🤖 AI 视觉</h3>
+        <p class="tagline">你们团队没人能做这件事。</p>
+        <ul>
+          <li>车到 → 当天出海报 → 上架就用</li>
+          <li>AI 短视频 15 秒，电影级画面</li>
+          <li>直播间背景升级，品牌空间感</li>
+          <li>封面模板统一，10 秒套用</li>
+          <li>省设计师外包费，一个人全包</li>
+        </ul>
       </div>
     </div>
   </div>
-</div></section>
+</section>
 
-<!-- ==================== WHY ME ==================== -->
-<section><div class="container">
-  <span class="section-tag">05 / 为什么是我</span>
-  <h2 class="section-heading">不是富二代。是一个想赢的人。</h2>
-  <p class="section-sub">
-    饼干哥，你从"全网冤大头"到把车库生意跑起来——你知道从泥里往上爬是什么感觉。我也是。
-  </p>
+<!-- ===== AUDIT ===== -->
+<section id="audit">
+  <div class="container">
+    <span class="section-tag">02 / 我看过你的号</span>
+    <h2 class="section-heading">不是海投。<br>是冲饼干来的。</h2>
+    <p class="section-sub">蹲过你的抖音。不是我挑刺——是我能帮上忙的地方。</p>
 
-  <div class="why-block reveal">
-    <p>
-      <strong>我从云南小镇出来的。</strong> 落水镇，你没听过，正常。我妈是小学老师，我爸是公务员。他们一辈子求稳怕事，花每一分钱都要算。我不要那样活。
-    </p>
-    <p>
-      我在楚雄师范学院读电气工程，家里选的。但大学让我遇到两件事——<strong>Hiphop 和 AI 工具。</strong> Hiphop 教会我表达，AI 教会我创造。你车库那些车，我用 AI 做出来的东西，不会比专业设计师差——而且更快、更敢试。
-    </p>
-    <p>
-      <strong>我不是来蹭豪车的。</strong> 我是来干活的。直播我会播，海报我会出，视频我会剪。一个人干两份活，省你一个 headcount。一个月试用，管吃住就行——<strong>你赌一个月饭钱，我用这一个月让你觉得值。</strong>
-    </p>
-  </div>
-</div></section>
-
-<!-- ==================== CONTACT ==================== -->
-<section id="contact"><div class="container">
-  <span class="section-tag">06 / 联系我</span>
-  <h2 class="section-heading">我人在云南。你一句话，我就来上海。</h2>
-  <p class="section-sub">手机号即微信号。加我，我们聊。视频面试、电话聊、让我试播一场——都行。</p>
-
-  <div class="contact-wrap reveal">
-    <div class="contact-main">
-      <div class="row"><span class="k">名字</span><div class="v">BeeWoo</div></div>
-      <div class="row"><span class="k">电话 / 微信</span><div class="v">18187461703</div></div>
-  
-      <div class="row"><span class="k">条件</span><div class="v">一个月试用，管吃住就行。其他的你看着给。</div></div>
-    </div>
-    <div class="contact-highlight">
-      <strong>💬 饼干哥</strong><br><br>
-      我不装。我不会说我已经准备好了。但我说到做到——<br><br>
-      直播能上，视觉能出，不怕苦不怕晚。<br><br>
-      你花一个月饭钱赌我。<br>
-      我赌自己能让你不想放我走。<br><br>
-      <strong>不亏。</strong>
+    <div class="audit-wrap">
+      <div class="audit-visual">[ 饼干车库视频截图 ]</div>
+      <div class="audit-cards">
+        <div class="audit-item">
+          <span class="label">封面</span>
+          <p class="problem">风格不统一，不像一个品牌</p>
+          <p class="fix">我建一套模板，每期 10 秒套上。</p>
+        </div>
+        <div class="audit-item">
+          <span class="label">直播间</span>
+          <p class="problem">车库实景没有设计感</p>
+          <p class="fix">AI 升级成电影级直播背景。</p>
+        </div>
+        <div class="audit-item">
+          <span class="label">单车包装</span>
+          <p class="problem">每台车缺少"视觉名片"</p>
+          <p class="fix">入库当天出 3 海报 + 1 视频。</p>
+        </div>
+        <div class="audit-item">
+          <span class="label">内容矩阵</span>
+          <p class="problem">只有搭讪，类型单一</p>
+          <p class="fix">AI 混剪 + 车型科普 + 车库日常。</p>
+        </div>
+      </div>
     </div>
   </div>
-</div></section>
+</section>
+
+<!-- ===== 30-DAY PLAN ===== -->
+<section id="plan">
+  <div class="container">
+    <span class="section-tag">03 / 入职后30天</span>
+    <h2 class="section-heading">不是保证书。<br>是认真的态度。</h2>
+    <p class="section-sub">下面是对这份工作的想法。每一条都能验证。</p>
+
+    <div class="honest-note">
+      <p><strong>我没有工作经验。</strong> 这是实话，不装。</p>
+      <p>直播没做过，汽车知识刚起步，上海我也没去过。</p>
+      <p>但我有一个习惯：<strong>想学的东西，自己先动手试一遍。</strong></p>
+      <p>想做主播，自己开播试了。想用 AI，自己学了 Midjourney 和可灵。想应聘你这，做了这个网站——不会写代码，一点一点查，一点一点改。</p>
+      <p><strong>我不会说"你选我不会错"。我说的是——给我活，我就干。干得不好，你教，我改。</strong></p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="week">第1周</span>
+        <h4>摸熟库存，建立 AI 素材线</h4>
+        <p>拍车 → AI 出首批海报和短视频模板 → 试播 3 场 → 对齐视觉风格。</p>
+      </div>
+      <div class="timeline-item">
+        <span class="week">第2周</span>
+        <h4>独立直播 + 封面系统上线</h4>
+        <p>独立上播卖车。每台在售车：海报×3 + 短视频×1。统一封面模板投入使用。</p>
+      </div>
+      <div class="timeline-item">
+        <span class="week">第3周</span>
+        <h4>直播间升级 + 内容矩阵扩列</h4>
+        <p>AI 重制直播背景。每周 2-3 条 AI 视觉内容：炫车混剪、车型对比、车库日常。</p>
+      </div>
+      <div class="timeline-item">
+        <span class="week">第4周</span>
+        <h4>数据说话</h4>
+        <p>四周产出：×张海报、×条视频、×场直播。有成长 → 留下来谈待遇。不行 → 不耽误你。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PORTFOLIO ===== -->
+<section id="works">
+  <div class="container">
+    <span class="section-tag">04 / 投名状</span>
+    <h2 class="section-heading">不是空口说。<br>是能给你的东西。</h2>
+    <p class="section-sub">附了 AI prompt。不只"能出图"——每张图有思路。</p>
+
+    <div class="port-grid">
+      <div class="port-item">
+        <div class="port-thumb">
+          <span class="emoji">🏎️</span>
+          <span class="prompt-hint">Rolls-Royce Cullinan, night city, neon on black paint, cinematic, 8K --ar 4:3</span>
+        </div>
+        <div class="port-meta"><h4>库里南卖车海报</h4><span>Midjourney → PS → 成品</span></div>
+      </div>
+      <div class="port-item">
+        <div class="port-thumb">
+          <span class="emoji">🎬</span>
+          <span class="prompt-hint">Ferrari SF90, Shanghai night, rain, taillight trails, slow motion, 15s --ar 16:9</span>
+        </div>
+        <div class="port-meta"><h4>15秒 AI 短视频</h4><span>可灵 / Runway → 剪映 → 成品</span></div>
+      </div>
+      <div class="port-item">
+        <div class="port-thumb">
+          <span class="emoji">📺</span>
+          <span class="prompt-hint">Luxury garage showroom, warm ambient light, industrial chic, concrete + gold --ar 16:9</span>
+        </div>
+        <div class="port-meta"><h4>直播间背景方案</h4><span>DALL·E / SD → 现场合成</span></div>
+      </div>
+      <div class="port-item">
+        <div class="port-thumb">
+          <span class="emoji">🧬</span>
+          <span class="prompt-hint">一套3件：车型图 + 价格带 + 角标 → 品牌色 #c8a053 + 粗体 → 每期套用</span>
+        </div>
+        <div class="port-meta"><h4>封面模板系统</h4><span>Figma → 团队直接套</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY ===== -->
+<section id="why">
+  <div class="container">
+    <span class="section-tag">05 / 为什么是我</span>
+    <h2 class="section-heading">小镇出来的。<br>想赢。</h2>
+    <p class="section-sub">饼干哥，你知道从泥里往上爬是什么感觉。我也是。</p>
+
+    <div class="why-block">
+      <p><strong>我从落水镇出来的。</strong> 你没听过，正常。我妈是小学老师，我爸是公务员。一辈子求稳怕事。我不要那样活。</p>
+      <p>大学遇到两件事——<strong>Hiphop 和 AI。</strong> Hiphop 教会我表达。AI 教会我创造。你车库那些车，我用 AI 做的视觉，不比设计师差——更快、更敢试。</p>
+      <p><strong>不是来蹭豪车的。是来干活的。</strong> 直播我能播，海报我能出，视频我能剪。一个人两份活，省一个 headcount。一个月，管吃住——<strong>你赌一个月饭钱，我用这一个月让你觉得值。</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+  <div class="container">
+    <span class="section-tag">06 / 联系我</span>
+    <h2 class="section-heading">人在云南。<br>你一句话，就来上海。</h2>
+    <p class="section-sub">手机即微信。加我。视频、电话、试播——都行。</p>
+
+    <div class="contact-wrap">
+      <div class="contact-main">
+        <div class="row"><span class="k">名字</span><div class="v">BeeWoo</div></div>
+        <div class="row"><span class="k">电话 / 微信</span><div class="v">18187461703</div></div>
+        <div class="row"><span class="k">路线</span><div class="v">云南宣威落水镇 → 楚雄 → 上海</div></div>
+        <div class="row"><span class="k">条件</span><div class="v">一个月试用。管吃住。</div></div>
+      </div>
+      <div class="contact-highlight">
+        <strong>💬 饼干哥</strong><br><br>
+        我不装。没准备好。但说到做到。<br><br>
+        直播能上，视觉能出。<br>
+        不怕苦不怕晚。<br><br>
+        你花一个月饭钱赌我一次。<br>
+        我赌自己能让你不想放我走。<br><br>
+        <strong>不亏。</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<section class="final-cta" id="final">
+  <h2>BeeWoo</h2>
+  <div class="big-phone">18187461703</div>
+  <p>微信同号。加我。</p>
+</section>
 
 <footer>BeeWoo © 2026 · 云南 → 上海 · 为饼干车库定制</footer>
 
 <script>
+// Scroll reveal
 const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')})},{threshold:.12})
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el))
+
+// Nav dots
+const dots=document.querySelectorAll('#navDots a')
+const sections=Array.from(dots).map(a=>document.querySelector(a.getAttribute('href')))
+const navObserver=new IntersectionObserver((es)=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      dots.forEach(d=>d.classList.remove('active'))
+      const idx=sections.indexOf(e.target)
+      if(idx>=0)dots[idx].classList.add('active')
+    }
+  })
+},{threshold:.4})
+sections.forEach(s=>navObserver.observe(s))
 </script>
 </body>
 </html>
-cd e:\c\beeWoo-site; git push
-cd e:\c\beeWoo-site; git pull --rebase; git push
-
-

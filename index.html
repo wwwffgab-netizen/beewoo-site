@@ -141,6 +141,12 @@ section{padding:clamp(4rem,12vw,8rem) clamp(1.2rem,5vw,5rem)}
 .port-grid4 .item:hover{border-color:rgba(200,160,83,.2)}
 .port-grid4 .item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease-out)}
 .port-grid4 .item:hover img{transform:scale(1.05)}
+.port-grid4 .item .img-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:.5rem .7rem;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  font-size:.7rem;color:#ccc;font-weight:600;letter-spacing:.03em;
+}
 
 /* ===== STORY DOUBLE-BEZEL ===== */
 .story-card p{color:#999;font-size:.88rem;line-height:1.9;margin-bottom:.6rem}
@@ -334,6 +340,34 @@ footer{text-align:center;padding:2rem;color:#1a1a1a;font-size:.65rem;border-top:
         <div class="item" onclick="openLB(this)">
           <img src="微信图片_20260715135823_180_2.png" alt="华尔街F40-4">
           <span class="hint" hidden>1979年，华尔街推销员，奶油色西装红色领带，靠在法拉利F40上，纽约海岸，富士胶片，《福布斯》杂志风格。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 组3: 四款不同车型 -->
+    <div class="port-group reveal">
+      <div class="group-title">四款豪华轿车</div>
+      <div class="group-prompt">一辆黑色豪华轿车停在圆形碎石车道上，旁边是喷泉，前方是一座宏伟的欧洲庄园或城堡大门。浅米色石墙，双拱铁木门。明亮的白天，自然光。建筑和汽车摄影，照片级写实且细致的纹理。</div>
+      <div class="port-grid4">
+        <div class="item" onclick="openLB(this)">
+          <img src="微信图片_20260715142155_188_2.png" alt="捷尼赛思G80">
+          <span class="img-label">捷尼赛思 G80</span>
+          <span class="hint" hidden>捷尼赛思G80 — 豪华轿车停在欧洲庄园城堡前，自然光，建筑和汽车摄影，照片级写实。</span>
+        </div>
+        <div class="item" onclick="openLB(this)">
+          <img src="微信图片_20260715142237_189_2.png" alt="DS9歌剧院版">
+          <span class="img-label">DS 9 歌剧院版</span>
+          <span class="hint" hidden>DS 9 歌剧院版 — 豪华轿车停在欧洲庄园城堡前，自然光，建筑和汽车摄影，照片级写实。</span>
+        </div>
+        <div class="item" onclick="openLB(this)">
+          <img src="微信图片_20260715142321_190_2.png" alt="雷克萨斯LS">
+          <span class="img-label">雷克萨斯 LS</span>
+          <span class="hint" hidden>雷克萨斯LS — 豪华轿车停在欧洲庄园城堡前，自然光，建筑和汽车摄影，照片级写实。</span>
+        </div>
+        <div class="item" onclick="openLB(this)">
+          <img src="微信图片_20260715142403_191_2.png" alt="BMW i7">
+          <span class="img-label">BMW i7</span>
+          <span class="hint" hidden>BMW i7 — 豪华轿车停在欧洲庄园城堡前，自然光，建筑和汽车摄影，照片级写实。</span>
         </div>
       </div>
     </div>

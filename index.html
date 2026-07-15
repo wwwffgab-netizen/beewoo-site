@@ -124,28 +124,23 @@ section{padding:clamp(4rem,12vw,8rem) clamp(1.2rem,5vw,5rem)}
 .skills-bento .ai .inner li{font-size:.78rem;color:#999;padding:.25em 0;padding-left:1em;position:relative;list-style:none}
 .skills-bento .ai .inner li::before{content:'→';position:absolute;left:0;color:#333}
 
-/* ===== PORTFOLIO MASONRY ===== */
-.port-masonry{
-  display:grid;grid-template-columns:3fr 2fr 2fr;grid-template-rows:auto auto;gap:1rem;
+/* ===== PORTFOLIO GROUPS ===== */
+.port-group{margin-bottom:3rem}
+.port-group .group-title{font-size:1rem;color:#fff;font-weight:700;margin-bottom:.3rem}
+.port-group .group-prompt{font-size:.72rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;max-width:560px}
+.port-grid4{
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.8rem;
 }
-@media(max-width:768px){.port-masonry{grid-template-columns:1fr 1fr;grid-template-rows:auto}}
-@media(max-width:480px){.port-masonry{grid-template-columns:1fr}}
-.port-masonry .item{
-  background:var(--card-bg);border:1px solid rgba(255,255,255,.03);
-  border-radius:1rem;overflow:hidden;cursor:pointer;
+@media(max-width:768px){.port-grid4{grid-template-columns:1fr 1fr}}
+.port-grid4 .item{
+  aspect-ratio:4/3;background:var(--card-bg);
+  border:1px solid rgba(255,255,255,.03);border-radius:.8rem;
+  overflow:hidden;cursor:pointer;position:relative;
   transition:border-color .4s var(--ease-out);
 }
-.port-masonry .item:hover{border-color:rgba(200,160,83,.2)}
-.port-masonry .item.big{grid-row:span 2}
-.port-masonry .item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease-out)}
-.port-masonry .item:hover img{transform:scale(1.04)}
-.port-masonry .item .label{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:1rem 1.2rem;
-  background:linear-gradient(transparent,rgba(5,5,5,.9));
-  font-size:.78rem;color:#ccc;font-weight:600;
-}
-.port-masonry .item{position:relative}
+.port-grid4 .item:hover{border-color:rgba(200,160,83,.2)}
+.port-grid4 .item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease-out)}
+.port-grid4 .item:hover img{transform:scale(1.05)}
 
 /* ===== STORY DOUBLE-BEZEL ===== */
 .story-card p{color:#999;font-size:.88rem;line-height:1.9;margin-bottom:.6rem}
@@ -293,23 +288,44 @@ footer{text-align:center;padding:2rem;color:#1a1a1a;font-size:.65rem;border-top:
   <div class="container">
     <span class="section-eyebrow">02 / 投名状</span>
     <h2 class="section-heading">不是空口说。<br>是能做出来的东西。</h2>
-    <p class="section-sub">每张图附 AI prompt。不只"能出图"——每张图有思路。点击放大。</p>
+    <p class="section-sub">每组四张，共用一个提示词。鼠标悬停放大，点击看提示词。</p>
 
-    <div class="port-masonry reveal">
-      <div class="item big" onclick="openLB(this)">
-        <img src="微信图片_20260714150107_152_2.png" alt="库里南城堡">
-        <span class="label">库里南 · 城堡庄园</span>
-        <span class="hint" hidden>A black Rolls-Royce Cullinan parked on a circular gravel driveway next to a fountain in front of a grand European manor. Light beige stone castle walls, double arched ironwood doors. Bright daylight, natural light. Architectural and automotive photography, photorealistic.</span>
-      </div>
-      <div class="item" onclick="openLB(this)">
-        <img src="微信图片_20260714150341_153_2.png" alt="库里南变体">
-        <span class="label">库里南 · 变体</span>
-        <span class="hint" hidden>A black Rolls-Royce Cullinan parked on a circular gravel driveway next to a fountain in front of a grand European manor. Light beige stone castle walls, double arched ironwood doors. Bright daylight, natural light. Architectural and automotive photography, photorealistic.</span>
-      </div>
-      <div class="item" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a0a,#101010);color:#2a2a2a;font-size:.7rem;text-align:center;padding:1.5rem">
-        🎬 短视频 + 📺 直播间<br>生成中…
+    <!-- 组1: 库里南 · 城堡庄园 -->
+    <div class="port-group reveal">
+      <div class="group-title">库里南 · 城堡庄园</div>
+      <div class="group-prompt">一辆黑色劳斯莱斯豪华轿车停在圆形碎石车道上，旁边是喷泉，前方是一座宏伟的欧洲庄园或城堡大门。浅米色石墙，双拱铁木门。车辆位于车架的中下部，侧面或三分之三正面视图。明亮的白天，自然光。建筑和汽车摄影，干净的构图，照片级写实且细致的纹理。</div>
+      <div class="port-grid4">
+        <div class="item" onclick="openLB(this)">
+          <img src="vipor1.png" alt="库里南1">
+          <span class="hint" hidden>一辆黑色劳斯莱斯豪华轿车停在圆形碎石车道上，旁边是喷泉，前方是一座宏伟的欧洲庄园或城堡大门。浅米色石墙，双拱铁木门。明亮的白天，自然光。建筑和汽车摄影，照片级写实。</span>
+        </div>
+        <div class="item" onclick="openLB(this)">
+          <img src="vipor2.png" alt="库里南2">
+          <span class="hint" hidden>一辆黑色劳斯莱斯豪华轿车停在圆形碎石车道上，旁边是喷泉，前方是一座宏伟的欧洲庄园或城堡大门。浅米色石墙，双拱铁木门。明亮的白天，自然光。建筑和汽车摄影，照片级写实。</span>
+        </div>
+        <div class="item" onclick="openLB(this)">
+          <img src="vipor3.png" alt="库里南3">
+          <span class="hint" hidden>一辆黑色劳斯莱斯豪华轿车停在圆形碎石车道上，旁边是喷泉，前方是一座宏伟的欧洲庄园或城堡大门。浅米色石墙，双拱铁木门。明亮的白天，自然光。建筑和汽车摄影，照片级写实。</span>
+        </div>
+        <div class="item" onclick="openLB(this)">
+          <img src="vipor4.png" alt="库里南4">
+          <span class="hint" hidden>一辆黑色劳斯莱斯豪华轿车停在圆形碎石车道上，旁边是喷泉，前方是一座宏伟的欧洲庄园或城堡大门。浅米色石墙，双拱铁木门。明亮的白天，自然光。建筑和汽车摄影，照片级写实。</span>
+        </div>
       </div>
     </div>
+
+    <!-- 组2: 待添加 -->
+    <!--
+    <div class="port-group reveal">
+      <div class="group-title">第二组标题</div>
+      <div class="group-prompt">提示词...</div>
+      <div class="port-grid4">
+        <div class="item" onclick="openLB(this)"><img src="group2_1.png" alt=""><span class="hint" hidden>提示词</span></div>
+        ...
+      </div>
+    </div>
+    -->
+
   </div>
 </section>
 

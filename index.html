@@ -83,7 +83,8 @@ body::after{
 
 /* ===== SECTIONS ===== */
 section{padding:clamp(4rem,12vw,8rem) clamp(1.2rem,5vw,5rem)}
-.container{max-width:1040px;margin:0 auto}
+.container{max-width:1400px;margin:0 auto}
+@media(min-width:1800px){.container{max-width:1600px}}
 .section-eyebrow{
   font-size:.65rem;letter-spacing:.16em;color:var(--gold-dim);
   text-transform:uppercase;margin-bottom:1rem;display:block;
@@ -126,6 +127,7 @@ section{padding:clamp(4rem,12vw,8rem) clamp(1.2rem,5vw,5rem)}
 
 /* ===== CAPABILITIES GRID ===== */
 .cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(min-width:1100px){.cap-grid{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:680px){.cap-grid{grid-template-columns:1fr}}
 .cap-list{list-style:none}
 .cap-list li{font-size:.78rem;color:#999;padding:.25em 0;padding-left:1em;position:relative}
